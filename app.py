@@ -231,8 +231,8 @@ if st.button("🧪 학습 성향 분석 시작"):
     target_cluster = complement_map[cluster_user]
 
     # 추천 데이터 필터링
-    recommended_complement = df_students[df_students['Cluster'] == target_cluster][['ID','grade']].head(3)
-    recommended_similar = df_students[df_students['Cluster'] == cluster_user][['ID','grade']].head(3)
+    recommended_complement = df_students[df_students['Cluster'] == target_cluster][['ID','grade']].head(5)
+    recommended_similar = df_students[df_students['Cluster'] == cluster_user][['ID','grade']].head(5)
 
     # 추천 출력
     st.subheader("🎯 추천 학습 메이트 (보완형)")
@@ -242,4 +242,5 @@ if st.button("🧪 학습 성향 분석 시작"):
     st.dataframe(recommended_similar.reset_index(drop=True))
 
    
+
 
