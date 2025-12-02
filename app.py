@@ -223,7 +223,7 @@ if st.button("🧪 학습 성향 분석 시작"):
 # ---------------------------------------------
 # 7) 학습 메이트 추천 버튼
 # ---------------------------------------------
-df_students = pd.read_csv("real_students_with_cluster.csv")  # 군집화 후 저장한 CSV
+df_students = pd.read_csv("real_students.csv")  # 군집화 후 저장한 CSV
 
 st.divider()
 st.subheader("🧑‍🤝‍🧑 학습 메이트 추천받기")
@@ -244,4 +244,5 @@ with col2:
         recommended = df_students[df_students['Cluster'] == cluster].copy()
         st.subheader("🎯 추천 학습 메이트 (유사형)")
         st.dataframe(recommended[['ID','grade','Cluster','Feedback']])
+
 
