@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import joblib
-from partner_matching import match_partners
 import pandas as pd
 
 # ---------------------------------------------
@@ -219,37 +218,3 @@ if st.button("🧪 학습 성향 분석 시작"):
             unsafe_allow_html=True
         )
 
-
-# ---------------------------------------------
-# 7) 학습 메이트 추천 버튼
-# ---------------------------------------------
-# 학습 메이트 추천
-complement_map = {0: 3, 1: 2, 2: 1, 3: 0}
-
-df_students = st.session_state.get('students_processed', pd.DataFrame(columns=['ID','grade','Cluster']))
-cluster_name_map = {v: k for k, v in st.session_state.get('cluster_name_map', {}).items()}  # 이름 -> 번호 매핑
-
-st.divider()
-st.subheader("🧑‍🤝‍🧑 학습 메이트 추천")
-
-# session_state에서 이름 기반으로 군집 번호 가져오기
-if 'cluster_name' in st.session_state and not df_students.empty:
-    user_cluster_name = st.session_state['cluster_name']
-    cluster_user = cluster_name_map.get(user_cluster_name, None)
-
-    if cluster_user is not None:
-        target_cluster = complement_map[cluster_user]
-
-        # 보완형 추천
-        recommended_complement = df_students[df_students['Cluster'] == target_cluster][['ID','grade']].head(3)
-        st.subheader("🎯 추천 학습 메이트 (보완형)")
-        st.dataframe(recommended_complement.reset_index(drop=True))
-
-        # 유사형 추천
-        recommended_similar = df_students[df_students['Cluster'] == cluster_user][['ID','grade']].head(3)
-        st.subheader("🎯 추천 학습 메이트 (유사형)")
-        st.dataframe(recommended_similar.reset_index(drop=True))
-    else:
-        st.info("학습자 유형을 찾을 수 없습니다.")
-else:
-    st.info("먼저 학습 성향 분석을 완료해야 추천 메이트를 볼 수 있습니다.")
