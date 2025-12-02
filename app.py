@@ -5,6 +5,16 @@ from partner_matching import match_partners
 import pandas as pd
 
 # ---------------------------------------------
+# 보완형 매핑 (0↔3, 1↔2)
+# ---------------------------------------------
+complement_map = {
+    0: 3,
+    3: 0,
+    1: 2,
+    2: 1
+}
+
+# ---------------------------------------------
 # 1) 페이지 기본 설정
 # ---------------------------------------------
 st.set_page_config(page_title="AI StudyMate - 학습 성향 분석", layout="wide")
@@ -64,10 +74,12 @@ for i, question in enumerate(questions, start=1):
     responses[f"Q{i}"] = CHOICES.index(choice) + 1
     st.markdown("---")
 
+
 # ---------------------------------------------
 # 3) 역량 점수 계산 및 학습자 유형 예측
 # ---------------------------------------------
 if st.button("🧪 학습 성향 분석 시작"):
+
     responses_array = np.array(list(responses.values()))
 
     Analytical_idx = [0, 2, 8, 14, 22]
@@ -82,21 +94,20 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     profile_vector = np.array([Analytical, Collaborative, SelfDirected, Questioning]).reshape(1, -1)
 
-    # ---------------------------------------------
-    # 4) 저장된 scaler + K-means 모델 불러오기
-    # ---------------------------------------------
+    # 모델 불러오기
     scaler = joblib.load("scaler.pkl")
     kmeans = joblib.load("kmeans_model.pkl")
 
-    # 스케일링 후 예측
     profile_scaled = scaler.transform(profile_vector)
-    cluster = kmeans.predict(profile_scaled)[0]
+    cluster = int(kmeans.predict(profile_scaled)[0])
 
+    # 군집 정보 저장
+    st.session_state['Analytical'] = Analytical
+    st.session_state['Collaborative'] = Collaborative
+    st.session_state['SelfDirected'] = SelfDirected
+    st.session_state['Questioning'] = Questioning
     st.session_state['cluster'] = cluster
 
-    # ---------------------------------------------
-    # 5) 군집명 / 하브루타 추천
-    # ---------------------------------------------
     cluster_name_map = {
         0: "병아리 탐험가 🐣",
         1: "논리왕 🤓",
@@ -105,147 +116,85 @@ if st.button("🧪 학습 성향 분석 시작"):
     }
 
     partner_recommendation_map = {
-    0: "학습 루틴이 잘 잡혀 있는 '문제 해결 마스터 🕵️‍♂️' 친구와 함께하면 기본기 형성이 빠르고, 다양한 문제 해결 경험을 공유할 수 있습니다.", 
-    1: "협력·소통이 강한 '친구왕 🦄' 친구와 페어를 이루면 이해폭이 넓어지고, 협력 학습을 통해 사회성도 함께 성장합니다.",
-    2: "'논리왕 🤓' 친구와 함께하면 사고력이 균형 있게 성장하고, 계획적 문제 해결과 분석 능력을 배울 수 있습니다.",
-    3: "'병아리 탐험가 🐣' 친구와 함께 활동하면 기초 개념 이해를 보완하고, 학습 루틴을 잡는 연습과 문제 풀이 습관 형성에 도움이 됩니다."
+        0: "학습 루틴이 잘 잡혀 있는 '문제 해결 마스터 🕵️‍♂️' 친구와 함께하면 좋아요.",
+        1: "'친구왕 🦄' 친구와 함께하면 협력적 활동에 강점을 보완할 수 있어요.",
+        2: "'논리왕 🤓' 친구와 함께하면 사고력이 균형 있게 성장해요.",
+        3: "'병아리 탐험가 🐣' 친구와 함께하면 기초 개념 보완에 도움이 돼요."
     }
 
+    st.session_state['cluster_name'] = cluster_name_map[cluster]
+    st.session_state['partner_recommendation'] = partner_recommendation_map[cluster]
 
-    strength_profile_map = {
-        0: {
-            "학습 스타일 분석": [
-                "기초 개념 이해와 반복 학습을 잘해요.",
-                "간단한 문제를 단계적으로 푸는 활동을 좋아해요.",
-                "복잡한 문제를 혼자 탐구하는 것이 부족해요.",
-                "심화 문제를 해결하는 경험이 약해요."
-            ],
-            "이렇게 공부하면 좋아요": [
-                "노트에 개념과 예제 문제를 정리해보기",
-                "문제 풀이 과정을 말로 설명하며 반복",
-                "쉬운 문제부터 단계별로 연습하여 자신감 쌓기"
-            ],
-            "친구와 함께 공부할 때 역할": [
-                "친구와 함께 공부할 때는 ‘탐험가’ 역할을 맡아, 활동 계획과 기본 개념을 제시하면 좋아요."
-            ]
-        },
-        1: {
-            "학습 스타일 분석": [
-                "논리적으로 문제를 분석하고 체계적으로 푸는 것을 잘해요.",
-                "혼자서 단계별 문제 해결과 계획 세우기를 좋아해요.",
-                "협력 학습이나 토론을 통한 이해는 부족해요.",
-                "창의적 문제 접근 경험이 약해요."
-            ],
-            "이렇게 공부하면 좋아요": [
-                "문제 풀이 계획표 작성 후 혼자 풀이",
-                "어려운 문제를 여러 방법으로 해결하며 사고력 확장",
-                "풀이 과정을 글로 정리하여 논리 구조 점검"
-            ],
-            "친구와 함께 공부할 때 역할": [
-                "친구와 함께 공부할 때는 ‘분석가’ 역할을 맡아, 문제 접근 방법과 전략을 제시하면 좋아요."
-            ]
-        },
-        2: {
-            "학습 스타일 분석": [
-                "친구와 함께 공부하고 토론하며 이해하는 것을 잘해요.",
-                "그룹 활동과 발표를 좋아해요.",
-                "혼자서 계획 세우고 문제를 분석하는 능력은 부족해요.",
-                "자기주도적 학습 경험이 약해요."
-            ],
-            "이렇게 공부하면 좋아요": [
-                "그룹 토론과 발표를 통해 문제 풀이 공유",
-                "문제를 서로 설명하고 역할 분담 후 결과 정리",
-                "글쓰기나 말로 설명하기로 이해한 내용을 기록"
-            ],
-            "친구와 함께 공부할 때 역할": [
-                "친구와 함께 공부할 때는 ‘설명가’ 역할을 맡아, 이해한 내용을 공유하면 좋아요."
-            ]
-        },
-        3: {
-            "학습 스타일 분석": [
-                "복잡한 문제를 다양한 방법으로 탐구하고 해결하는 것을 잘해요.",
-                "심화 문제와 응용 활동을 좋아해요.",
-                "기초 개념 반복 학습은 부족해요.",
-                "학습 루틴 관리 경험이 약해요."
-            ],
-            "이렇게 공부하면 좋아요": [
-                "문제 변형 및 응용 문제를 스스로 풀어보기",
-                "학습 내용을 글로 정리하거나 친구에게 설명",
-                "기초 개념 복습과 실수 분석으로 약점 보완"
-            ],
-            "친구와 함께 공부할 때 역할": [
-                "친구와 함께 공부할 때는 ‘문제 해결사’ 역할을 맡아, 어려운 문제를 시도하고 전략을 공유하면 좋아요."
-            ]
-        }
-    }
-
-    # ---------------------------------------------
-    # 6) 결과 출력 (Strength Profile)
-    # ---------------------------------------------
-    st.subheader("📌 분석 결과 요약")
-    st.metric("예측된 학습자 유형", cluster_name_map[cluster])
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.write("### 🎯 나의 역량 점수")
-        st.write(f"- **Analytical(분석성)**: {Analytical:.2f}/5.00")
-        st.write(f"- **Collaborative(협력성)**: {Collaborative:.2f}/5.00")
-        st.write(f"- **Self-Directed(자기주도)**: {SelfDirected:.2f}/5.00")
-        st.write(f"- **Questioning(탐구·질문성)**: {Questioning:.2f}/5.00")
-
-    with col2:
-        st.write("### 🤝 추천 하브루타 파트너 유형")
-        st.info(partner_recommendation_map[cluster])
-
-    st.divider()
-    st.subheader("📇 나의 Strength Profile 카드")
-
-    # 동적 카드 출력
-    profile_sections = strength_profile_map[cluster]
-    for title, points in profile_sections.items():
-        points_html = "".join([f"<p style='margin:5px 0;'>- {p}</p>" for p in points])
-        st.markdown(
-            f"""
-            <div style="
-                background-color:#f0f4f8; 
-                padding:18px; 
-                border-radius:12px; 
-                margin-bottom:12px;
-                box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-            ">
-                <h4 style="color:#1f4e79;">{title}</h4>
-                {points_html}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    # 학생 데이터 처리
+    if 'students_processed' not in st.session_state:
+        df_students_raw = pd.read_csv("real_students.csv")
+        st.session_state['students_processed'] = match_partners(df_students_raw)
 
 
 # ---------------------------------------------
-# 7) 학습 메이트 추천 버튼
+# 6) 결과 출력
 # ---------------------------------------------
 if 'cluster' in st.session_state:
 
+    Analytical = st.session_state['Analytical']
+    Collaborative = st.session_state['Collaborative']
+    SelfDirected = st.session_state['SelfDirected']
+    Questioning = st.session_state['Questioning']
     cluster = st.session_state['cluster']
-    df_students = pd.read_csv("real_students.csv")
+
+    st.subheader("📌 분석 결과 요약")
+    st.metric("예측된 학습자 유형", st.session_state['cluster_name'])
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("### 🎯 나의 역량 점수")
+        st.write(f"- **Analytical**: {Analytical:.2f}/5.00")
+        st.write(f"- **Collaborative**: {Collaborative:.2f}/5.00")
+        st.write(f"- **Self-Directed**: {SelfDirected:.2f}/5.00")
+        st.write(f"- **Questioning**: {Questioning:.2f}/5.00")
+
+    with col2:
+        st.write("### 🤝 추천 하브루타 파트너 유형")
+        st.info(st.session_state['partner_recommendation'])
 
     st.divider()
+
+
+# ---------------------------------------------
+# 학습 메이트 추천
+# ---------------------------------------------
+if 'cluster' in st.session_state:
+
+    df_students = st.session_state['students_processed']
+
     st.subheader("🧑‍🤝‍🧑 학습 메이트 추천받기")
 
     col1, col2 = st.columns(2)
 
+    # 버튼: 추천 모드 저장
     with col1:
         if st.button("💡 나의 단점을 보완해줄 학습 메이트"):
-            recommended = df_students[df_students['Cluster'] != cluster]
-            st.subheader("🎯 추천 학습 메이트 (보완형)")
-            st.dataframe(recommended[['ID','grade','Cluster','Feedback']])
+            st.session_state['show_recommendation_mode'] = "complement"
 
     with col2:
         if st.button("🤝 나와 비슷한 학습 메이트"):
-            recommended = df_students[df_students['Cluster'] == cluster]
+            st.session_state['show_recommendation_mode'] = "similar"
+
+    # 추천 결과 출력
+    mode = st.session_state.get('show_recommendation_mode', None)
+    if mode:
+
+        cluster = st.session_state['cluster']
+
+        if mode == "complement":
+            target_cluster = complement_map[cluster]
+            candidates = df_students[df_students['Cluster'] == target_cluster]
+            result = candidates.head(3)[['ID', 'grade']]
+            st.subheader("🎯 추천 학습 메이트 (보완형)")
+
+        elif mode == "similar":
+            candidates = df_students[df_students['Cluster'] == cluster]
+            result = candidates.head(3)[['ID', 'grade']]
             st.subheader("🎯 추천 학습 메이트 (유사형)")
-            st.dataframe(recommended[['ID','grade','Cluster','Feedback']])
 
-
-
+        st.dataframe(result.reset_index(drop=True))
