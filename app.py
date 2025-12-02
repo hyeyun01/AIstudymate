@@ -217,30 +217,7 @@ if st.button("🧪 학습 성향 분석 시작"):
             """,
             unsafe_allow_html=True
         )
-
-# Strength Profile 카드 출력 끝부분 아래
-st.subheader("📇 나의 Strength Profile 카드")
-
-# 동적 카드 출력
-profile_sections = strength_profile_map[cluster]
-for title, points in profile_sections.items():
-    points_html = "".join([f"<p style='margin:5px 0;'>- {p}</p>" for p in points])
-    st.markdown(
-        f"""
-        <div style="
-            background-color:#f0f4f8; 
-            padding:18px; 
-            border-radius:12px; 
-            margin-bottom:12px;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-        ">
-            <h4 style="color:#1f4e79;">{title}</h4>
-            {points_html}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+        
 # ---------------------------------------------
 # 8) 추천 StudyMate 버튼
 # ---------------------------------------------
@@ -249,5 +226,7 @@ if st.button("🔎 추천 StudyMate 찾기"):
     st.session_state['show_recommendation'] = True
     # 페이지 이동
     st.session_state['page'] = "study_mate_recommendation"
-    st.experimental_rerun()  # 버튼 클릭 시 새 페이지로 이동
+    st.experimental_rerun()  # 버튼 클릭 시 새 페이지로 이동        
+
+
 
