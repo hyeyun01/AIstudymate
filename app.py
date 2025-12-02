@@ -108,6 +108,78 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     # ---------------------------------------------
     # 6) 결과 출력
+    # ---------------------------------------------
+
+    # 군집명 + 아이콘 매핑
+    cluster_display = {
+        0: "🐣 **병아리 탐험가**",
+        1: "🤓 **논리왕**",
+        2: "🦄 **친구왕**",
+        3: "🕵️‍♂️ **문제 해결 마스터**"
+    }
+
+    cluster_name_display = cluster_display.get(cluster, "Unknown")
+
+    st.subheader("📌 분석 결과 요약")
+
+    # 결과 강조 박스
+    st.markdown(
+        f"""
+    <div style="background-color:#FFF4C1; padding:15px; border-radius:10px; text-align:center; font-size:24px;">
+    {cluster_name_display}
+    </div>
+    """,
+        unsafe_allow_html=True
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("### 🎯 나의 역량 점수")
+        st.markdown(
+            f"""
+    - **Analytical(분석성)**: {Analytical:.2f} / 5  
+    - **Collaborative(협력성)**: {Collaborative:.2f} / 5  
+    - **Self-Directed(자기주도)**: {SelfDirected:.2f} / 5  
+    - **Questioning(탐구·질문성)**: {Questioning:.2f} / 5  
+    """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        st.write("### 🤝 추천 하브루타 파트너 유형")
+        st.markdown(
+            f"""
+    <div style="background-color:#D1F2FF; padding:10px; border-radius:8px;">
+    {partner_recommendation}
+    </div>
+    """,
+            unsafe_allow_html=True
+        )
+
+    st.divider()
+
+    # ---------------------------------------------
+    # 7) 역량 카드 스타일 출력 - 시각적 강화
+    # ---------------------------------------------
+    st.subheader("📇 나의 Strength Profile 카드")
+
+    st.markdown(
+        f"""
+    <div style="background-color:#E8F8F5; padding:15px; border-radius:10px;">
+    <h3>💡 학습자 유형: {cluster_name_display}</h3>
+    <ul>
+    <li>🔹 분석적 사고 수준: <b>{Analytical:.1f} / 5</b></li>
+    <li>🔹 협력 성향: <b>{Collaborative:.1f} / 5</b></li>
+    <li>🔹 자기주도: <b>{SelfDirected:.1f} / 5</b></li>
+    <li>🔹 탐구·질문 수준: <b>{Questioning:.1f} / 5</b></li>
+    </ul>
+    <p>📌 <i>AI StudyMate는 이 프로필을 기반으로 최적의 하브루타 파트너와 학습 그룹을 추천합니다.</i></p>
+    </div>
+    """,
+        unsafe_allow_html=True
+    )
+
     st.subheader("📌 분석 결과 요약")
     st.metric("예측된 학습자 유형", cluster_name)
 
