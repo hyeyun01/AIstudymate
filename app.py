@@ -194,18 +194,31 @@ if st.button("🧪 학습 성향 분석 시작"):
     st.subheader("📇 나의 Strength Profile 카드")
 
     # -----------------------------
-    # Strength Profile 카드 형태 출력
+    # 7) Strength Profile 카드 HTML로 섹션별 출력
     # -----------------------------
-    st.markdown(
-        f"""
-        <div style="
-            background-color:#f0f4f8; 
-            padding:20px; 
-            border-radius:12px; 
-            margin-bottom:15px;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-        ">
-            {study_tips.replace('\n', '<br>')}
-        </div>
-        """, unsafe_allow_html=True
-    )
+    # study_tips를 섹션별로 분리
+    # 예: "**학습 스타일 분석:**", "**이렇게 공부하면 좋아요:**", "**친구와 함께 공부할 때 역할:**"
+    sections = study_tips.split("**")[1:]  # 맨 앞 공백 제거
+
+    for sec in sections:
+        try:
+            title, content = sec.split(":**", 1)
+        except ValueError:
+            continue
+        # 줄바꿈 처리
+        content_html = content.replace("\n", "<br>").strip()
+
+        st.markdown(
+            f"""
+            <div style="
+                background-color:#f0f4f8;
+                padding:18px; 
+                border-radius:12px;
+                margin-bottom:10px;
+                box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            ">
+                <h4 style="color:#1f4e79;">{title}</h4>
+                <p style="margin:5px 0;">{content_html}</p>
+            </div>
+            """, unsafe_allow_html=True
+        )
