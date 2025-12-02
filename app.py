@@ -5,8 +5,8 @@ from sklearn.cluster import KMeans
 # ---------------------------------------------
 # 1) 페이지 기본 설정
 # ---------------------------------------------
-st.set_page_config(page_title="AI StudyMate - 학습 성향 분석", layout="wide")
-st.title("🧠 AI StudyMate - 학습 성향 진단")
+st.set_page_config(page_title="AI StudyMate - 학습 성향 분석 데모", layout="wide")
+st.title("🧠 AI StudyMate - 학습 성향 진단 데모")
 st.write("30문항 설문을 기반으로 학습 성향을 분석하고, 맞춤형 하브루타 파트너 유형과 학습법을 추천합니다.")
 st.divider()
 
@@ -156,13 +156,14 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     st.divider()
     st.subheader("📇 나의 Strength Profile 카드")
-    st.success(f"""
-<b>{cluster_name}</b>
+    st.markdown(f"""
+    **{cluster_name}**
 
-- 학습 스타일 분석: {study_tips['analysis']}
-- 이렇게 공부하면 좋아요: {study_tips['method']}
-- 친구와 함께 공부할 때 역할: {study_tips['role']}
+    - 학습 스타일 분석: {study_tips['analysis']}
+    - 이렇게 공부하면 좋아요: {study_tips['method']}
+    - 친구와 함께 공부할 때 역할: {study_tips['role']}
 
-📌 *AI StudyMate는 이 프로필을 기반으로  
-최적의 하브루타 파트너와 학습 그룹을 추천합니다.*
-""", unsafe_allow_html=True)
+    📌 *AI StudyMate는 이 프로필을 기반으로  
+    최적의 하브루타 파트너와 학습 그룹을 추천합니다.*
+    """)
+
