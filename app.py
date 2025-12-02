@@ -1,6 +1,5 @@
 import streamlit as st
 import numpy as np
-import pandas as pd
 from sklearn.cluster import KMeans
 
 # ---------------------------------------------
@@ -10,7 +9,6 @@ st.set_page_config(page_title="AI StudyMate - 학습 성향 분석 데모", layo
 
 st.title("🧠 AI StudyMate - 학습 성향 진단 데모")
 st.write("30문항 설문을 기반으로 학습 성향을 분석하고, 맞춤형 하브루타 파트너 유형을 추천합니다.")
-
 st.divider()
 
 # ---------------------------------------------
@@ -49,10 +47,8 @@ questions = [
     "다른 사람과 학습할 때 동기부여가 된다."
 ]
 
-
 st.subheader("📘 학습 성향 설문 (30문항)")
 
-# 5점 리커트용 선택지
 CHOICES = ["① 전혀 아니다", "② 아니다", "③ 보통이다", "④ 그렇다", "⑤ 매우 그렇다"]
 
 responses = {}
@@ -63,73 +59,59 @@ for i, question in enumerate(questions, start=1):
         "",
         CHOICES,
         key=f"q_{i}",
-        horizontal=True  # 가로로 배치되어 ○ ○ ○ ○ ○ 나오도록
+        horizontal=True
     )
-    responses[f"Q{i}"] = CHOICES.index(choice) + 1  # 실제 값은 1~5
+    responses[f"Q{i}"] = CHOICES.index(choice) + 1  # 1~5 값
     st.markdown("---")
-
 
 # ---------------------------------------------
 # 3) 역량 점수 계산 (Analytical, Collaborative, SelfDirected, Questioning)
 # ---------------------------------------------
 if st.button("🧪 학습 성향 분석 시작"):
+    response_values = np.array(list(responses.values()))
 
-    # dict -> 리스트 변환 (Q1~Q30 순서대로)
-    response_list = [responses[f"Q{i}"] for i in range(1, 31)]
+    Analytical_idx = [0, 2, 8, 14, 22]     
+    Collaborative_idx = [3, 4, 10, 11, 18, 19, 25]  
+    SelfDirected_idx = [1, 6, 7, 15, 16, 26]         
+    Questioning_idx = [5, 12, 13, 20, 21, 27, 28]    
 
-    # 단순 가중치 기반 역량 계산
-    Analytical_idx = [0, 2, 8, 14, 22]     # 분석성 관련 문항
-    Collaborative_idx = [3, 4, 10, 11, 18, 19, 25]  # 협력성
-    SelfDirected_idx = [1, 6, 7, 15, 16, 26]         # 자기주도
-    Questioning_idx = [5, 12, 13, 20, 21, 27, 28]    # 질문/탐구
-
-    Analytical = np.mean([response_list[i] for i in Analytical_idx])
-    Collaborative = np.mean([response_list[i] for i in Collaborative_idx])
-    SelfDirected = np.mean([response_list[i] for i in SelfDirected_idx])
-    Questioning = np.mean([response_list[i] for i in Questioning_idx])
-
+    Analytical = response_values[Analytical_idx].mean()
+    Collaborative = response_values[Collaborative_idx].mean()
+    SelfDirected = response_values[SelfDirected_idx].mean()
+    Questioning = response_values[Questioning_idx].mean()
 
     profile_vector = np.array([Analytical, Collaborative, SelfDirected, Questioning]).reshape(1, -1)
 
     # ---------------------------------------------
     # 4) K-means 군집 모델 (데모용 랜덤 초기 모델)
-    # 실제 학습 모델 사용 시 → KMeans.load(...) or pickle 사용
-    # ---------------------------------------------
     kmeans = KMeans(n_clusters=4, random_state=42)
-    sample_data = np.random.rand(200, 4) * 5   # 데모용 임시 학습
+    sample_data = np.random.rand(200, 4) * 5
     kmeans.fit(sample_data)
 
     cluster = kmeans.predict(profile_vector)[0]
 
     # ---------------------------------------------
-    # 5) 군집명 매핑 (당신의 실제 군집구조 기반)
-    # ---------------------------------------------
+    # 5) 군집명 매핑 (재밌는 이름)
     cluster_name = {
-        0: "기초 역량 형성 단계형 (Foundation Stage)",
-        1: "자기주도·논리 선호형 (Independent Analytical)",
-        2: "협력·관계 중심형 (Collaborative Communicator)",
-        3: "탐구·문제 해결 상위형 (Analytical Problem Solver)"
+        0: "병아리 탐험가",
+        1: "논리왕",
+        2: "친구왕",
+        3: "문제 해결 마스터"
     }.get(cluster, "Unknown")
 
-    # ---------------------------------------------
-    # 6) 하브루타 파트너 유형 추천 로직
-    # (상호보완성 원칙 기반)
-    # ---------------------------------------------
     partner_recommendation = {
-        0: "학습 루틴이 잘 잡혀 있는 '자기주도형' 친구와 함께하면 기본기 형성이 빠릅니다.",
-        1: "협력·소통이 강한 '관계 중심형' 친구와 페어를 이루면 이해폭이 넓어집니다.",
-        2: "'탐구형/분석형' 친구와 함께하면 사고력이 균형 있게 성장합니다.",
-        3: "협력 중심형 친구와 함께 활동하면 설명력·소통력이 보완됩니다."
+        0: "논리왕 친구와 함께하면 기본기를 쌓는 속도가 빨라집니다.",
+        1: "친구왕과 페어를 이루면 이해 폭과 협력 능력이 높아집니다.",
+        2: "문제 해결 마스터 친구와 함께하면 사고력과 탐구력이 균형 있게 성장합니다.",
+        3: "친구왕과 함께 활동하면 설명력과 소통 능력이 보완됩니다."
     }[cluster]
 
     # ---------------------------------------------
-    # 7) 결과 출력
-    # ---------------------------------------------
+    # 6) 결과 출력
     st.subheader("📌 분석 결과 요약")
     st.metric("예측된 학습자 유형", cluster_name)
 
     col1, col2 = st.columns(2)
-
     with col1:
         st.write("### 🎯 나의 역량 점수")
         st.write(f"- **Analytical(분석성)**: {Analytical:.2f}")
@@ -143,11 +125,7 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     st.divider()
 
-    # ---------------------------------------------
-    # 8) 역량 카드 스타일 출력
-    # ---------------------------------------------
     st.subheader("📇 나의 Strength Profile 카드")
-
     st.success(f"""
 **학습자 유형: {cluster_name}**
 
