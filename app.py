@@ -49,15 +49,25 @@ questions = [
     "다른 사람과 학습할 때 동기부여가 된다."
 ]
 
-st.header("📋 30문항 학습 성향 설문")
-st.write("아래 문항을 1(전혀 아니다) ~ 5(매우 그렇다)로 응답해주세요.")
 
-responses = []
-for i, q in enumerate(questions):
-    score = st.slider(f"Q{i+1}. {q}", 1, 5, 3)
-    responses.append(score)
+st.subheader("📘 학습 성향 설문 (30문항)")
 
-st.divider()
+# 5점 리커트용 선택지
+CHOICES = ["① 전혀 아니다", "② 아니다", "③ 보통이다", "④ 그렇다", "⑤ 매우 그렇다"]
+
+responses = {}
+
+for i, question in enumerate(questions, start=1):
+    st.write(f"**Q{i}. {question}**")
+    choice = st.radio(
+        "",
+        CHOICES,
+        key=f"q_{i}",
+        horizontal=True  # 가로로 배치되어 ○ ○ ○ ○ ○ 나오도록
+    )
+    responses[f"Q{i}"] = CHOICES.index(choice) + 1  # 실제 값은 1~5
+    st.markdown("---")
+
 
 # ---------------------------------------------
 # 3) 역량 점수 계산 (Analytical, Collaborative, SelfDirected, Questioning)
