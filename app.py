@@ -6,7 +6,6 @@ from sklearn.cluster import KMeans
 # 1) 페이지 기본 설정
 # ---------------------------------------------
 st.set_page_config(page_title="AI StudyMate - 학습 성향 분석 데모", layout="wide")
-
 st.title("🧠 AI StudyMate - 학습 성향 진단 데모")
 st.write("30문항 설문을 기반으로 학습 성향을 분석하고, 맞춤형 하브루타 파트너 유형을 추천합니다.")
 st.divider()
@@ -50,7 +49,6 @@ questions = [
 st.subheader("📘 학습 성향 설문 (30문항)")
 
 CHOICES = ["① 전혀 아니다", "② 아니다", "③ 보통이다", "④ 그렇다", "⑤ 매우 그렇다"]
-
 responses = {}
 
 for i, question in enumerate(questions, start=1):
@@ -61,129 +59,66 @@ for i, question in enumerate(questions, start=1):
         key=f"q_{i}",
         horizontal=True
     )
-    responses[f"Q{i}"] = CHOICES.index(choice) + 1  # 1~5 값
+    responses[f"Q{i}"] = CHOICES.index(choice) + 1
     st.markdown("---")
 
 # ---------------------------------------------
-# 3) 역량 점수 계산 (Analytical, Collaborative, SelfDirected, Questioning)
+# 3) 역량 점수 계산
 # ---------------------------------------------
 if st.button("🧪 학습 성향 분석 시작"):
-    response_values = np.array(list(responses.values()))
+    responses_array = np.array(list(responses.values()))
 
-    Analytical_idx = [0, 2, 8, 14, 22]     
-    Collaborative_idx = [3, 4, 10, 11, 18, 19, 25]  
-    SelfDirected_idx = [1, 6, 7, 15, 16, 26]         
-    Questioning_idx = [5, 12, 13, 20, 21, 27, 28]    
+    Analytical_idx = [0, 2, 8, 14, 22]
+    Collaborative_idx = [3, 4, 10, 11, 18, 19, 25]
+    SelfDirected_idx = [1, 6, 7, 15, 16, 26]
+    Questioning_idx = [5, 12, 13, 20, 21, 27, 28]
 
-    Analytical = response_values[Analytical_idx].mean()
-    Collaborative = response_values[Collaborative_idx].mean()
-    SelfDirected = response_values[SelfDirected_idx].mean()
-    Questioning = response_values[Questioning_idx].mean()
+    Analytical = responses_array[Analytical_idx].mean()
+    Collaborative = responses_array[Collaborative_idx].mean()
+    SelfDirected = responses_array[SelfDirected_idx].mean()
+    Questioning = responses_array[Questioning_idx].mean()
 
     profile_vector = np.array([Analytical, Collaborative, SelfDirected, Questioning]).reshape(1, -1)
 
     # ---------------------------------------------
-    # 4) K-means 군집 모델 (데모용 랜덤 초기 모델)
+    # 4) K-means 군집 모델 (데모용)
+    # ---------------------------------------------
     kmeans = KMeans(n_clusters=4, random_state=42)
     sample_data = np.random.rand(200, 4) * 5
     kmeans.fit(sample_data)
-
     cluster = kmeans.predict(profile_vector)[0]
 
     # ---------------------------------------------
-    # 5) 군집명 매핑 (재밌는 이름)
-    cluster_name = {
-        0: "병아리 탐험가",
-        1: "논리왕",
-        2: "친구왕",
-        3: "문제 해결 마스터"
-    }.get(cluster, "Unknown")
-
-    partner_recommendation = {
-        0: "논리왕 친구와 함께하면 기본기를 쌓는 속도가 빨라집니다.",
-        1: "친구왕과 페어를 이루면 이해 폭과 협력 능력이 높아집니다.",
-        2: "문제 해결 마스터 친구와 함께하면 사고력과 탐구력이 균형 있게 성장합니다.",
-        3: "친구왕과 함께 활동하면 설명력과 소통 능력이 보완됩니다."
-    }[cluster]
-
+    # 5) 군집명 매핑 (재밌는 이름 + 이모지)
     # ---------------------------------------------
-    # 6) 결과 출력
-    # ---------------------------------------------
-
-    # 군집명 + 아이콘 매핑
-    cluster_display = {
-        0: "🐣 **병아리 탐험가**",
-        1: "🤓 **논리왕**",
-        2: "🦄 **친구왕**",
-        3: "🕵️‍♂️ **문제 해결 마스터**"
+    cluster_name_map = {
+        0: "🐣 병아리 탐험가",
+        1: "🤓 논리왕",
+        2: "🦄 친구왕",
+        3: "🕵️‍♂️ 문제 해결 마스터"
     }
+    cluster_name = cluster_name_map.get(cluster, "Unknown")
 
-    cluster_name_display = cluster_display.get(cluster, "Unknown")
+    # ---------------------------------------------
+    # 6) 하브루타 파트너 유형 추천
+    # ---------------------------------------------
+    partner_recommendation_map = {
+        0: "🐣 '병아리 탐험가' 유형은 학습 루틴이 안정적인 '논리왕' 친구와 함께하면 기본기와 탐구력이 균형 있게 성장합니다.",
+        1: "🤓 '논리왕' 유형은 창의적이고 협력적인 '친구왕' 친구와 페어를 이루면 사고력과 소통력이 극대화됩니다.",
+        2: "🦄 '친구왕' 유형은 분석적이고 문제 해결 능력이 강한 '문제 해결 마스터' 친구와 함께하면 학습 효과가 상승합니다.",
+        3: "🕵️‍♂️ '문제 해결 마스터' 유형은 협력적이고 유연한 '친구왕' 친구와 활동하면 설명력과 팀워크가 보완됩니다."
 
+    }
+    partner_recommendation = partner_recommendation_map[cluster]
+
+    # ---------------------------------------------
+    # 7) 결과 출력
+    # ---------------------------------------------
     st.subheader("📌 분석 결과 요약")
-
-    # 결과 강조 박스
-    st.markdown(
-        f"""
-    <div style="background-color:#FFF4C1; padding:15px; border-radius:10px; text-align:center; font-size:24px;">
-    {cluster_name_display}
-    </div>
-    """,
-        unsafe_allow_html=True
-    )
+    st.markdown(f"**예측된 학습자 유형:** <span style='color:#FF5733'>{cluster_name}</span>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
 
-    with col1:
-        st.write("### 🎯 나의 역량 점수")
-        st.markdown(
-            f"""
-    - **Analytical(분석성)**: {Analytical:.2f} / 5  
-    - **Collaborative(협력성)**: {Collaborative:.2f} / 5  
-    - **Self-Directed(자기주도)**: {SelfDirected:.2f} / 5  
-    - **Questioning(탐구·질문성)**: {Questioning:.2f} / 5  
-    """,
-            unsafe_allow_html=True
-        )
-
-    with col2:
-        st.write("### 🤝 추천 하브루타 파트너 유형")
-        st.markdown(
-            f"""
-    <div style="background-color:#D1F2FF; padding:10px; border-radius:8px;">
-    {partner_recommendation}
-    </div>
-    """,
-            unsafe_allow_html=True
-        )
-
-    st.divider()
-
-    # ---------------------------------------------
-    # 7) 역량 카드 스타일 출력 - 시각적 강화
-    # ---------------------------------------------
-    st.subheader("📇 나의 Strength Profile 카드")
-
-    st.markdown(
-        f"""
-    <div style="background-color:#E8F8F5; padding:15px; border-radius:10px;">
-    <h3>💡 학습자 유형: {cluster_name_display}</h3>
-    <ul>
-    <li>🔹 분석적 사고 수준: <b>{Analytical:.1f} / 5</b></li>
-    <li>🔹 협력 성향: <b>{Collaborative:.1f} / 5</b></li>
-    <li>🔹 자기주도: <b>{SelfDirected:.1f} / 5</b></li>
-    <li>🔹 탐구·질문 수준: <b>{Questioning:.1f} / 5</b></li>
-    </ul>
-    <p>📌 <i>AI StudyMate는 이 프로필을 기반으로 최적의 하브루타 파트너와 학습 그룹을 추천합니다.</i></p>
-    </div>
-    """,
-        unsafe_allow_html=True
-    )
-
-    st.subheader("📌 분석 결과 요약")
-    st.metric("예측된 학습자 유형", cluster_name)
-
-    col1, col2 = st.columns(2)
     with col1:
         st.write("### 🎯 나의 역량 점수")
         st.write(f"- **Analytical(분석성)**: {Analytical:.2f}")
@@ -197,9 +132,12 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     st.divider()
 
+    # ---------------------------------------------
+    # 8) 역량 카드 스타일 출력
+    # ---------------------------------------------
     st.subheader("📇 나의 Strength Profile 카드")
     st.success(f"""
-**학습자 유형: {cluster_name}**
+<b>{cluster_name}</b>
 
 - 분석적 사고 수준: **{Analytical:.1f} / 5**
 - 협력 성향: **{Collaborative:.1f} / 5**
@@ -208,4 +146,4 @@ if st.button("🧪 학습 성향 분석 시작"):
 
 📌 *AI StudyMate는 이 프로필을 기반으로  
 최적의 하브루타 파트너와 학습 그룹을 추천합니다.*
-""")
+""", unsafe_allow_html=True)
