@@ -217,29 +217,29 @@ if st.button("🧪 학습 성향 분석 시작"):
             """,
             unsafe_allow_html=True
         )
-        
+           
     # ---------------------------------------------
-    # 7) 추천 StudyMate 버튼
-    # ---------------------------------------------
-    if st.button("🔎 추천 StudyMate 찾기"):
-        # CSV에서 학생 데이터 불러오기
-        df_students = pd.read_csv("real_students.csv")  # 반드시 'Cluster', 'ID', 'grade' 컬럼 존재
+    # 7) 추천 StudyMate
+    # CSV에서 학생 데이터 불러오기
+    df_students = pd.read_csv("real_students.csv")  # 반드시 'Cluster', 'ID', 'grade' 컬럼 존재
 
-        # 현재 사용자의 cluster 가져오기
-        cluster_user = int(cluster)  # 이전에 학습 성향 분석 후 나온 cluster 값
+    # 현재 사용자의 cluster 가져오기
+    cluster_user = int(cluster)  # 이전에 학습 성향 분석 후 나온 cluster 값
 
-        # 보완형 매핑
-        complement_map = {0:3, 1:2, 2:1, 3:0}
-        target_cluster = complement_map[cluster_user]
+    # 보완형 매핑
+    complement_map = {0:3, 1:2, 2:1, 3:0}
+    target_cluster = complement_map[cluster_user]
 
-        # 추천 데이터 필터링
-        recommended_complement = df_students[df_students['Cluster'] == target_cluster][['ID','grade']].head(3)
-        recommended_similar = df_students[df_students['Cluster'] == cluster_user][['ID','grade']].head(3)
+    # 추천 데이터 필터링
+    recommended_complement = df_students[df_students['Cluster'] == target_cluster][['ID','grade']].head(3)
+    recommended_similar = df_students[df_students['Cluster'] == cluster_user][['ID','grade']].head(3)
 
-        # 추천 출력
-        st.subheader("🎯 추천 학습 메이트 (보완형)")
-        st.dataframe(recommended_complement.reset_index(drop=True))
+    # 추천 출력
+    st.subheader("🎯 추천 학습 메이트 (보완형)")
+    st.dataframe(recommended_complement.reset_index(drop=True))
 
-        st.subheader("🎯 추천 학습 메이트 (유사형)")
-        st.dataframe(recommended_similar.reset_index(drop=True))
+    st.subheader("🎯 추천 학습 메이트 (유사형)")
+    st.dataframe(recommended_similar.reset_index(drop=True))
+
    
+
