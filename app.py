@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-import pickle
+import joblib  # pickle 대신 joblib 사용
 
 # ---------------------------------------------
 # 1) 페이지 기본 설정
@@ -83,10 +83,8 @@ if st.button("🧪 학습 성향 분석 시작"):
     # ---------------------------------------------
     # 4) 저장된 scaler + K-means 모델 불러오기
     # ---------------------------------------------
-    with open("scaler.pkl", "rb") as f:
-        scaler = pickle.load(f)
-    with open("kmeans_model.pkl", "rb") as f:
-        kmeans = pickle.load(f)
+    scaler = joblib.load("scaler.pkl")
+    kmeans = joblib.load("kmeans_model.pkl")
 
     # 스케일링 후 예측
     profile_scaled = scaler.transform(profile_vector)
@@ -195,4 +193,3 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     st.subheader("📇 나의 Strength Profile 카드")
     st.text(study_tips)
-
