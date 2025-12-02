@@ -218,15 +218,16 @@ if st.button("🧪 학습 성향 분석 시작"):
             unsafe_allow_html=True
         )
         
-# ---------------------------------------------
-# 8) 추천 StudyMate 버튼
-# ---------------------------------------------
-if st.button("🔎 추천 StudyMate 찾기"):
-    # 세션 상태에 분석 완료 표시
-    st.session_state['show_recommendation'] = True
-    # 페이지 이동
-    st.session_state['page'] = "study_mate_recommendation"
-    st.experimental_rerun()  # 버튼 클릭 시 새 페이지로 이동        
+    # ---------------------------------------------
+    # 8) 추천 StudyMate 버튼
+    # ---------------------------------------------
+    if st.button("🔎 추천 StudyMate 찾기"):
+        # 세션 상태에 분석 완료 표시
+        st.session_state['show_recommendation'] = True
+        # 페이지 이동
+        st.session_state['page'] = "study_mate_recommendation"
+        st.experimental_rerun()  # 버튼 클릭 시 새 페이지로 이동     
+
 
 
 
