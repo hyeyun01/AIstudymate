@@ -74,18 +74,20 @@ for i, question in enumerate(questions, start=1):
 # ---------------------------------------------
 if st.button("🧪 학습 성향 분석 시작"):
 
-    responses = np.array(responses)
+    # dict -> 리스트 변환 (Q1~Q30 순서대로)
+    response_list = [responses[f"Q{i}"] for i in range(1, 31)]
 
-    # 단순 가중치 기반 역량 계산 예시 (실제 모델 구조에 맞게 수정 가능)
+    # 단순 가중치 기반 역량 계산
     Analytical_idx = [0, 2, 8, 14, 22]     # 분석성 관련 문항
     Collaborative_idx = [3, 4, 10, 11, 18, 19, 25]  # 협력성
     SelfDirected_idx = [1, 6, 7, 15, 16, 26]         # 자기주도
     Questioning_idx = [5, 12, 13, 20, 21, 27, 28]    # 질문/탐구
 
-    Analytical = responses[Analytical_idx].mean()
-    Collaborative = responses[Collaborative_idx].mean()
-    SelfDirected = responses[SelfDirected_idx].mean()
-    Questioning = responses[Questioning_idx].mean()
+    Analytical = np.mean([response_list[i] for i in Analytical_idx])
+    Collaborative = np.mean([response_list[i] for i in Collaborative_idx])
+    SelfDirected = np.mean([response_list[i] for i in SelfDirected_idx])
+    Questioning = np.mean([response_list[i] for i in Questioning_idx])
+
 
     profile_vector = np.array([Analytical, Collaborative, SelfDirected, Questioning]).reshape(1, -1)
 
