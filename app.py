@@ -1,6 +1,8 @@
 import streamlit as st
 import numpy as np
-import joblib  # pickle 대신 joblib 사용
+import joblib
+from partner_matching import match_partners
+import pandas as pd
 
 # ---------------------------------------------
 # 1) 페이지 기본 설정
@@ -216,3 +218,17 @@ if st.button("🧪 학습 성향 분석 시작"):
             """,
             unsafe_allow_html=True
         )
+
+
+# ---------------------------------------------
+# 7) 학습 메이트 추천 버튼
+# ---------------------------------------------
+st.divider()
+st.subheader("🧑‍🤝‍🧑 학습 메이트 추천받기")
+uploaded_file = st.file_uploader("학생 데이터 CSV 업로드", type="csv")
+if uploaded_file is not None:
+    df_students = pd.read_csv(uploaded_file)
+    st.dataframe(df_students.head())
+    results = match_partners(df_students)
+    st.subheader("추천 결과")
+    st.dataframe(results)
