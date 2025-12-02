@@ -92,6 +92,8 @@ if st.button("🧪 학습 성향 분석 시작"):
     profile_scaled = scaler.transform(profile_vector)
     cluster = kmeans.predict(profile_scaled)[0]
 
+    st.session_state['cluster'] = cluster
+
     # ---------------------------------------------
     # 5) 군집명 / 하브루타 추천
     # ---------------------------------------------
@@ -244,5 +246,6 @@ if 'cluster' in st.session_state:
             recommended = df_students[df_students['Cluster'] == cluster]
             st.subheader("🎯 추천 학습 메이트 (유사형)")
             st.dataframe(recommended[['ID','grade','Cluster','Feedback']])
+
 
 
