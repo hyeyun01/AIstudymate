@@ -108,8 +108,7 @@ if st.button("🧪 학습 성향 분석 시작"):
     }
 
     study_tips_map = {
-        0: """
-        **학습 스타일 분석:**  
+        0: """**학습 스타일 분석:**  
 - 기초 개념 이해와 반복 학습을 잘해요.  
 - 간단한 문제를 단계적으로 푸는 활동을 좋아해요.  
 - 복잡한 문제를 혼자 탐구하는 것이 부족해요.  
@@ -123,8 +122,7 @@ if st.button("🧪 학습 성향 분석 시작"):
 **친구와 함께 공부할 때 역할:**  
 - 친구와 함께 공부할 때는 ‘탐험가’ 역할을 맡아, 활동 계획과 기본 개념을 제시하면 좋아요.
 """,
-        1: """
-        **학습 스타일 분석:**  
+        1: """**학습 스타일 분석:**  
 - 논리적으로 문제를 분석하고 체계적으로 푸는 것을 잘해요.  
 - 혼자서 단계별 문제 해결과 계획 세우기를 좋아해요.  
 - 협력 학습이나 토론을 통한 이해는 부족해요.  
@@ -138,8 +136,7 @@ if st.button("🧪 학습 성향 분석 시작"):
 **친구와 함께 공부할 때 역할:**  
 - 친구와 함께 공부할 때는 ‘분석가’ 역할을 맡아, 문제 접근 방법과 전략을 제시하면 좋아요.
 """,
-        2: """
-        **학습 스타일 분석:**  
+        2: """**학습 스타일 분석:**  
 - 친구와 함께 공부하고 토론하며 이해하는 것을 잘해요.  
 - 그룹 활동과 발표를 좋아해요.  
 - 혼자서 계획 세우고 문제를 분석하는 능력은 부족해요.  
@@ -153,8 +150,7 @@ if st.button("🧪 학습 성향 분석 시작"):
 **친구와 함께 공부할 때 역할:**  
 - 친구와 함께 공부할 때는 ‘설명가’ 역할을 맡아, 이해한 내용을 공유하면 좋아요.
 """,
-        3: """
-        **학습 스타일 분석:**  
+        3: """**학습 스타일 분석:**  
 - 복잡한 문제를 다양한 방법으로 탐구하고 해결하는 것을 잘해요.  
 - 심화 문제와 응용 활동을 좋아해요.  
 - 기초 개념 반복 학습은 부족해요.  
@@ -184,10 +180,10 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     with col1:
         st.write("### 🎯 나의 역량 점수")
-        st.write(f"- **Analytical(분석성)**: {Analytical:.2f}")
-        st.write(f"- **Collaborative(협력성)**: {Collaborative:.2f}")
-        st.write(f"- **Self-Directed(자기주도)**: {SelfDirected:.2f}")
-        st.write(f"- **Questioning(탐구·질문성)**: {Questioning:.2f}")
+        st.write(f"- **Analytical(분석성)**: {Analytical:.2f}/5.00")
+        st.write(f"- **Collaborative(협력성)**: {Collaborative:.2f}/5.00")
+        st.write(f"- **Self-Directed(자기주도)**: {SelfDirected:.2f}/5.00")
+        st.write(f"- **Questioning(탐구·질문성)**: {Questioning:.2f}/5.00")
 
     with col2:
         st.write("### 🤝 추천 하브루타 파트너 유형")
@@ -196,5 +192,20 @@ if st.button("🧪 학습 성향 분석 시작"):
     st.divider()
 
     st.subheader("📇 나의 Strength Profile 카드")
-    st.text(study_tips)
 
+    # -----------------------------
+    # Strength Profile 카드 형태 출력
+    # -----------------------------
+    st.markdown(
+        f"""
+        <div style="
+            background-color:#f0f4f8; 
+            padding:20px; 
+            border-radius:12px; 
+            margin-bottom:15px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        ">
+            {study_tips.replace('\n', '<br>')}
+        </div>
+        """, unsafe_allow_html=True
+    )
