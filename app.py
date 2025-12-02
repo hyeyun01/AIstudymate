@@ -135,15 +135,15 @@ if st.button("🧪 학습 성향 분석 시작"):
     # ---------------------------------------------
     # 8) 역량 카드 스타일 출력
     # ---------------------------------------------
-    st.subheader("📇 나의 Strength Profile 카드")
-    st.success(f"""
-<b>{cluster_name}</b>
+    st.markdown(f"""
+**📇 나의 Strength Profile 카드**
 
+- 학습자 유형: **{cluster_name}**
 - 분석적 사고 수준: **{Analytical:.1f} / 5**
 - 협력 성향: **{Collaborative:.1f} / 5**
 - 자기주도: **{SelfDirected:.1f} / 5**
 - 탐구·질문 수준: **{Questioning:.1f} / 5**
 
-📌 *AI StudyMate는 이 프로필을 기반으로  
-최적의 하브루타 파트너와 학습 그룹을 추천합니다.*
-""", unsafe_allow_html=True)
+📌 AI StudyMate는 이 프로필을 기반으로 최적의 하브루타 파트너와 학습 그룹을 추천합니다.
+""")
+
