@@ -65,7 +65,7 @@ for i, question in enumerate(questions, start=1):
     st.markdown("---")
 
 # ---------------------------------------------
-# 3) 역량 점수 계산
+# 3) 역량 점수 계산 및 학습자 유형 예측
 # ---------------------------------------------
 if st.button("🧪 학습 성향 분석 시작"):
     responses_array = np.array(list(responses.values()))
@@ -178,7 +178,7 @@ if st.button("🧪 학습 성향 분석 시작"):
     }
 
     # ---------------------------------------------
-    # 6) 결과 출력
+    # 6) 결과 출력 (Strength Profile)
     # ---------------------------------------------
     st.subheader("📌 분석 결과 요약")
     st.metric("예측된 학습자 유형", cluster_name_map[cluster])
@@ -225,10 +225,20 @@ if st.button("🧪 학습 성향 분석 시작"):
 # ---------------------------------------------
 st.divider()
 st.subheader("🧑‍🤝‍🧑 학습 메이트 추천받기")
-uploaded_file = st.file_uploader("학생 데이터 CSV 업로드", type="csv")
-if uploaded_file is not None:
-    df_students = pd.read_csv(uploaded_file)
-    st.dataframe(df_students.head())
-    results = match_partners(df_students)
-    st.subheader("추천 결과")
-    st.dataframe(results)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("💡 나의 단점을 보완해줄 학습 메이트"):
+        # 같은 군집이 아니라 다른 군집 학생 중 보완 가능한 학생 추천
+        # 예: 나보다 Cluster 점수가 높은 학생, 혹은 나와 다른 역량이 강한 학생
+        recommended = df_students[df_students['Cluster'] != cluster].copy()
+        st.subheader("🎯 추천 학습 메이트 (보완형)")
+        st.dataframe(recommended[['ID','grade','Cluster','Feedback']])
+
+with col2:
+    if st.button("🤝 나와 비슷한 학습 메이트"):
+        # 같은 Cluster 학생 추천
+        recommended = df_students[df_students['Cluster'] == cluster].copy()
+        st.subheader("🎯 추천 학습 메이트 (유사형)")
+        st.dataframe(recommended[['ID','grade','Cluster','Feedback']])
