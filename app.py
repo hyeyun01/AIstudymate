@@ -249,20 +249,15 @@ if 'cluster' in st.session_state:
 
     with col1:
         if st.button("💡 나의 단점을 보완해줄 학습 메이트"):
-            cluster = st.session_state['cluster']
+            cluster = int(st.session_state['cluster'])
             target_cluster = complement_map[cluster]
-            st.write("cluster:", cluster)
-            st.write("target_cluster:", target_cluster)
-            st.write("df_students['Cluster'].unique():", df_students['Cluster'].unique())
-            st.write("df_students.shape:", df_students.shape)
-
             recommended = df_students[df_students['Cluster']==target_cluster][['ID','grade']].head(3)
             st.subheader("🎯 추천 학습 메이트 (보완형)")
             st.dataframe(recommended.reset_index(drop=True))
 
     with col2:
         if st.button("🤝 나와 비슷한 학습 메이트"):
-            cluster = st.session_state['cluster']
+            cluster = int(st.session_state['cluster'])
             recommended = df_students[df_students['Cluster']==cluster][['ID','grade']].head(3)
             st.subheader("🎯 추천 학습 메이트 (유사형)")
             st.dataframe(recommended.reset_index(drop=True))
