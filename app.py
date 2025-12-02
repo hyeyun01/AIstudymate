@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-from sklearn.cluster import KMeans
+import pickle
 
 # ---------------------------------------------
 # 1) 페이지 기본 설정
@@ -195,3 +195,4 @@ if st.button("🧪 학습 성향 분석 시작"):
 
     st.subheader("📇 나의 Strength Profile 카드")
     st.text(study_tips)
+
